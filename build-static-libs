@@ -9,14 +9,14 @@ glib_tarball_prefix=".tar.xz"
 libffi="libffi-3.2.1"
 libffi_tarball_prefix=".tar.gz"
 
-glibc="glibc-$(./glibc-ver-det)"
-glibc_tarball_prefix=".tar.gz"
-
 if [ "$(basename $PWD)" != "qemu-static-aoscbuild" ]; then
 	pushd qemu-static-aoscbuild
 else
 	pushd .
 fi
+
+glibc="glibc-$(./glibc-ver-det)"
+glibc_tarball_prefix=".tar.gz"
 
 ./retrieve-sources
 
