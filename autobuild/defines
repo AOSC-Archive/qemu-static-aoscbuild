@@ -1,0 +1,5 @@
+PKGNAME=qemu-user-static
+PKGVER=0-git
+PKGSEC=admin
+PKGDEP=""
+PKGDES="The statically-linked version of qemu usermode emulation"

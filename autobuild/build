@@ -1,0 +1,2 @@
+unset CC CFLAGS CXX CXXFLAGS LD LDFLAGS CPP CPPFLAGS
+qemu-static-aoscbuild/build-user-static
