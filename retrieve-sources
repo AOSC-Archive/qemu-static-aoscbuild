@@ -1,0 +1,6 @@
+#! /bin/bash -e
+[ "$(basename $PWD)" != "qemu-static-aoscbuild" ] && cd qemu-static-aoscbuild || true
+wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.46/glib-2.46.2.tar.xz
+wget -c ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
+wget -c http://www.zlib.net/zlib-1.2.8.tar.xz
+wget -c http://ftp.gnu.org/gnu/glibc/glibc-$(./glibc-ver-det).tar.gz

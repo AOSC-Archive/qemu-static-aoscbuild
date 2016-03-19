@@ -1,0 +1,6 @@
+glibc-[0123456789]*
+glib-*
+libffi-*
+zlib-*
+static-libs
+

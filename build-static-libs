@@ -1,0 +1,77 @@
+#! /bin/bash -e
+
+zlib="zlib-1.2.8"
+zlib_tarball_prefix=".tar.xz"
+
+glib="glib-2.46.2"
+glib_tarball_prefix=".tar.xz"
+
+libffi="libffi-3.2.1"
+libffi_tarball_prefix=".tar.gz"
+
+glibc="glibc-$(./glibc-ver-det)"
+glibc_tarball_prefix=".tar.gz"
+
+if [ "$(basename $PWD)" != "qemu-static-aoscbuild" ]; then
+	pushd qemu-static-aoscbuild
+else
+	pushd .
+fi
+
+./retrieve-sources
+
+mkdir -p static-libs
+
+prefix="$PWD/static-libs"
+
+export PKG_CONFIG_PATH=
+export PKG_CONFIG_LIBDIR="$prefix/lib/pkgconfig"
+
+if [ ! -e $prefix/lib/pkgconfig/zlib.pc ]; then
+	tar xvf "${zlib}${zlib_tarball_prefix}"
+	cd "${zlib}"
+	./configure --static --prefix=$prefix
+	make $ABMK
+	make install
+	cd ..
+fi
+
+if [ ! -e $prefix/lib/pkgconfig/libffi.pc ]; then
+	tar xvf "${libffi}${libffi_tarball_prefix}"
+	cd "${libffi}"
+	./configure --enable-static --disable-shared --prefix=$prefix
+	make $ABMK
+	make install
+	cd ..
+fi
+
+if [ ! -e $prefix/lib/pkgconfig/glib-2.0.pc ]; then
+	tar xvf "${glib}${glib_tarball_prefix}"
+	cd "${glib}"
+	./configure --enable-static --disable-shared --prefix=$prefix --with-pcre=internal \
+		--disable-selinux --disable-fam --disable-xattr --disable-libelf 
+	make $ABMK
+	make install
+	cd ..
+fi
+
+if [ ! -e $prefix/lib/librt.a ]; then
+	tar xvf "${glibc}${glibc_tarball_prefix}"
+	cd "${glibc}"
+	mkdir -p fakebin
+	ln -sfv /usr/bin/ld.bfd fakebin/ld
+	export PATH="$PWD/fakebin:$PATH"
+	mkdir -p build
+	cd build
+	which ld
+	echo $PATH
+	../configure --prefix=/usr          \
+	             --disable-profile      \
+	             --enable-kernel=2.6.32 --disable-werror
+	make
+	cp rt/librt.a login/libutil.a $prefix/lib
+	cd ../..
+fi
+
+
+

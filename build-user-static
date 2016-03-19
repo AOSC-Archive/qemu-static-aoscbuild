@@ -1,0 +1,23 @@
+#! /bin/bash -e
+prefix="$PWD/qemu-static-aoscbuild/static-libs"
+
+[ -e $prefix/lib/libglib-2.0.a ] || qemu-static-aoscbuild/build-static-libs
+
+export PKG_CONFIG_PATH=
+export PKG_CONFIG_LIBDIR="$prefix/lib/pkgconfig"
+
+./configure --static --disable-system --enable-user --extra-cflags="-I$prefix/include" --extra-ldflags="-L$prefix/lib" --disable-werror --disable-gcrypt
+sed -i '/socket_scm_helpe/d' tests/Makefile
+sed -i '/ivshmem/d' Makefile
+sed -i '/qemu-bridge-helper/d' Makefile
+sed -i 's/^TOOLS=/TOOLS= # /g' config-host.mak
+make $ABMK
+
+bindir=$PWD/abdist/usr/bin
+mkdir -p $bindir
+cp *-linux-user/qemu-* $bindir
+for i in $bindir/*
+do
+mv $i $i-static
+done
+

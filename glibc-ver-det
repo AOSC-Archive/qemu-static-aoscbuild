@@ -1,0 +1,10 @@
+#! /bin/bash
+for i in 2.23
+do
+	if [ -e /lib/libc-$i.so ]; then
+		echo $i
+		exit 0
+	fi
+done
+echo unknown
+exit 1
